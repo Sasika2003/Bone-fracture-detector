@@ -4,14 +4,234 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Result</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Analysis Results - AI Bone Fracture Detector</title>
 </head>
 <body>
-    <h2>Result:</h2>
-    <img src="{{ image_path }}" alt="Uploaded Image">
-    <p>{{ result }}</p>
-    <a href="/">Back to Home</a>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-x-ray"></i>
+                <h1>AI Bone Fracture Detector</h1>
+            </div>
+        </header>
+
+        <main class="results-content">
+            <div class="results-header">
+                <i class="fas fa-chart-line"></i>
+                <h2>Analysis Results</h2>
+                <div class="timestamp">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="analysis-time"></span>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="image-section">
+                    <div class="image-card">
+                        <h3>
+                            <i class="fas fa-image"></i>
+                            Uploaded X-Ray
+                        </h3>
+                        <div class="image-container">
+                            <img src="{{ image_path }}" alt="X-Ray Image" class="xray-image">
+                            <div class="image-overlay">
+                                <button class="zoom-btn" onclick="toggleZoom()">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <div class="result-card">
+                        <h3>
+                            <i class="fas fa-stethoscope"></i>
+                            Diagnosis
+                        </h3>
+                        <div class="result-content">
+                            <div class="result-status">
+                                {% if ('no' in result.lower() and 'fracture' in result.lower()) or 'normal' in result.lower() or 'healthy' in result.lower() or 'intact' in result.lower() %}
+                                    <div class="status-indicator no-fracture">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>No Fracture Detected</span>
+                                    </div>
+                                {% elif 'fracture' in result.lower() or 'broken' in result.lower() or 'crack' in result.lower() or 'damage' in result.lower() %}
+                                    <div class="status-indicator fracture-detected">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>Potential Fracture Detected</span>
+                                    </div>
+                                {% else %}
+                                    <div class="status-indicator inconclusive">
+                                        <i class="fas fa-question-circle"></i>
+                                        <span>Analysis Complete</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="result-text">
+                                <p>{{ result }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recommendations-card">
+                        <h3>
+                            <i class="fas fa-user-md"></i>
+                            Recommendations
+                        </h3>
+                        <div class="recommendations-content">
+                            {% if ('no' in result.lower() and 'fracture' in result.lower()) or 'normal' in result.lower() or 'healthy' in result.lower() or 'intact' in result.lower() %}
+                                <div class="recommendation positive">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    <div>
+                                        <h4>Good News!</h4>
+                                        <p>No fracture was detected in the X-ray analysis. Your bone appears to be intact and healthy.</p>
+                                    </div>
+                                </div>
+                                <div class="recommendation positive">
+                                    <i class="fas fa-heartbeat"></i>
+                                    <div>
+                                        <h4>Continue Normal Activities</h4>
+                                        <p>You can generally resume normal activities, but listen to your body and rest if needed.</p>
+                                    </div>
+                                </div>
+                                <div class="recommendation">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    <div>
+                                        <h4>Monitor for Changes</h4>
+                                        <p>If pain persists or worsens, or if you experience new symptoms, consult a healthcare professional.</p>
+                                    </div>
+                                </div>
+                            {% elif 'fracture' in result.lower() or 'broken' in result.lower() or 'crack' in result.lower() or 'damage' in result.lower() %}
+                                <div class="recommendation urgent">
+                                    <i class="fas fa-ambulance"></i>
+                                    <div>
+                                        <h4>Seek Immediate Medical Attention</h4>
+                                        <p>Consult with a qualified orthopedic specialist or radiologist for proper diagnosis and treatment.</p>
+                                    </div>
+                                </div>
+                                <div class="recommendation urgent">
+                                    <i class="fas fa-ice-skating"></i>
+                                    <div>
+                                        <h4>Apply Ice & Immobilize</h4>
+                                        <p>Apply ice to reduce swelling and avoid moving the affected area until professional help arrives.</p>
+                                    </div>
+                                </div>
+                                <div class="recommendation urgent">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <div>
+                                        <h4>Contact Emergency Services</h4>
+                                        <p>If severe pain or inability to move, contact emergency services immediately.</p>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="recommendation">
+                                    <i class="fas fa-user-md"></i>
+                                    <div>
+                                        <h4>Consult Healthcare Professional</h4>
+                                        <p>For proper interpretation of results, please consult with a qualified healthcare professional.</p>
+                                    </div>
+                                </div>
+                                <div class="recommendation">
+                                    <i class="fas fa-clipboard-check"></i>
+                                    <div>
+                                        <h4>Monitor Symptoms</h4>
+                                        <p>Continue to monitor for pain, swelling, or reduced mobility and seek medical advice if symptoms persist.</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Analyze Another Image
+                </a>
+                <button onclick="downloadReport()" class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Download Report
+                </button>
+                <button onclick="window.print()" class="btn btn-outline">
+                    <i class="fas fa-print"></i>
+                    Print Results
+                </button>
+            </div>
+
+            
+        </main>
+
+    
+    </div>
+
+    <!-- Zoom Modal -->
+    <div id="zoomModal" class="zoom-modal">
+        <span class="close-zoom" onclick="closeZoom()">&times;</span>
+        <img id="zoomedImage" class="zoomed-image">
+    </div>
+
+    <script>
+        // Set current timestamp
+        document.getElementById('analysis-time').textContent = new Date().toLocaleString();
+
+        // Image zoom functionality
+        function toggleZoom() {
+            const modal = document.getElementById('zoomModal');
+            const zoomedImg = document.getElementById('zoomedImage');
+            const originalImg = document.querySelector('.xray-image');
+            
+            zoomedImg.src = originalImg.src;
+            modal.style.display = 'block';
+        }
+
+        function closeZoom() {
+            document.getElementById('zoomModal').style.display = 'none';
+        }
+
+        // Download report functionality
+        function downloadReport() {
+            const reportContent = `
+AI Bone Fracture Detection Report
+Generated: ${new Date().toLocaleString()}
+
+Analysis Result: {{ result }}
+
+Recommendations:
+- This analysis is for educational purposes only
+- Consult with qualified healthcare professionals
+- Do not use as substitute for professional medical diagnosis
+
+---
+AI Bone Fracture Detector © 2025
+            `;
+            
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'fracture-analysis-report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Close zoom modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('zoomModal');
+            if (event.target === modal) {
+                closeZoom();
+            }
+        }
+
+        // Print styles
+        window.addEventListener('beforeprint', function() {
+            document.querySelector('.zoom-modal').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
-
-

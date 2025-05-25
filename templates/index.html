@@ -4,21 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Bone Fracture Detector</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>AI Bone Fracture Detector</title>
 </head>
 <body>
-    <h1>Bone Fracture Detector</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <label for="file">Choose an image:</label>
-        <input type="file" name="file" id="file" accept=".jpg, .jpeg, .png">
-        <input type="submit" value="Upload">
-    </form>
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-x-ray"></i>
+                <h1>AI Bone Fracture Detector</h1>
+            </div>
+            <p class="subtitle">Advanced Medical Image Analysis Powered by AI</p>
+        </header>
+
+        <main class="main-content">
+            <div class="upload-section">
+                <div class="upload-card">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    
+                    <h2>Upload X-Ray Image</h2>
+                    <p class="description">
+                        Upload your X-ray image for AI-powered fracture detection. 
+                        Supported formats: JPG, JPEG, PNG
+                    </p>
+
+                    <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+                        <div class="file-input-wrapper">
+                            <input type="file" name="file" id="file" accept=".jpg,.jpeg,.png" class="file-input">
+                            <label for="file" class="file-label">
+                                <i class="fas fa-folder-open"></i>
+                                <span class="file-text">Choose X-Ray Image</span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="upload-btn">
+                            <i class="fas fa-microscope"></i>
+                            Analyze Image
+                        </button>
+                    </form>
+
+                    {% if message %}
+                    <div class="message-alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>{{ message }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            
+    </div>
+
+    <script>
+        // File input enhancement
+        const fileInput = document.getElementById('file');
+        const fileText = document.querySelector('.file-text');
+        
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                fileText.textContent = e.target.files[0].name;
+                fileText.parentElement.classList.add('file-selected');
+            } else {
+                fileText.textContent = 'Choose X-Ray Image';
+                fileText.parentElement.classList.remove('file-selected');
+            }
+        });
+
+        // Form submission loading state
+        const form = document.querySelector('.upload-form');
+        const submitBtn = document.querySelector('.upload-btn');
+        
+        form.addEventListener('submit', function(e) {
+            if (fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Please select an X-ray image first.');
+                return;
+            }
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            submitBtn.disabled = true;
+        });
+    </script>
 </body>
 </html>
-
-
-
-
